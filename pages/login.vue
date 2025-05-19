@@ -17,7 +17,7 @@ definePageMeta({ layout: "auth" });
 
 const email = ref("");
 const password = ref("");
-const errors = ref<{ email?: string; password?: string }>({});
+const errors = ref("");
 const loading = ref(false); // ← état du loader
 
 const supabase = useSupabaseClient();
@@ -28,13 +28,13 @@ const schema = z.object({
 });
 
 async function signIn() {
-  errors.value = {};
+  errors.value = "";
   const result = schema.safeParse({
     email: email.value,
     password: password.value,
   });
   if (!result.success) {
-    result.error.issues.forEach((i) => (errors.value[i.path[0]] = i.message));
+    errors.value = result.error.issues.map((i) => i.message).join(", ");
     return;
   }
 
@@ -42,7 +42,10 @@ async function signIn() {
   const { error } = await supabase.auth.signInWithPassword(result.data);
   loading.value = false;
 
-  if (error) return useNuxtApp().$toast.error(error.message);
+  if (error) {
+    errors.value = error.message;
+    return console.log(error.message);
+  }
 
   // Récupère l'URL de redirection depuis les paramètres de l'URL
   const route = useRoute();
@@ -53,7 +56,7 @@ async function signIn() {
 }
 
 async function magicLink() {
-  if (!email.value) return useNuxtApp().$toast.error("Entrez votre email");
+  if (!email.value) return console.log("Entrez votre email");
   loading.value = true;
   const { error } = await supabase.auth.signInWithOtp({
     email: email.value,
@@ -61,8 +64,11 @@ async function magicLink() {
   });
   loading.value = false;
 
-  if (error) return useNuxtApp().$toast.error(error.message);
-  useNuxtApp().$toast.success("Lien magique envoyé !");
+  if (error) {
+    errors.value = error.message;
+    return console.log(error.message);
+  }
+  console.log("Lien magique envoyé !");
 }
 </script>
 
@@ -70,14 +76,17 @@ async function magicLink() {
   <Card class="mx-auto w-sm">
     <CardHeader>
       <CardTitle class="text-2xl">Connexion</CardTitle>
-      <CardDescription>Entrez vos identifiants.</CardDescription>
+      <CardDescription v-if="errors" class="text-red-500">
+        {{ errors }}
+      </CardDescription>
+      <CardDescription v-else>Entrez vos identifiants.</CardDescription>
     </CardHeader>
 
     <CardContent>
       <form @submit.prevent="signIn" class="grid gap-4">
         <!-- Email -->
         <div class="grid gap-2">
-          <Label for="email">E‑mail</Label>
+          <Label for="email">Email</Label>
           <Input
             id="email"
             v-model="email"
@@ -94,7 +103,7 @@ async function magicLink() {
           <div class="flex items-center">
             <Label for="password">Mot de passe</Label>
             <NuxtLink to="/reset" class="ml-auto text-sm underline"
-              >Mot de passe oublié ?</NuxtLink
+              >Mot de passe oublié ?</NuxtLink
             >
           </div>
           <Input

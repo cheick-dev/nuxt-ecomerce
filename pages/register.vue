@@ -54,9 +54,9 @@ async function register() {
   });
   loading.value = false;
 
-  if (error) return useNuxtApp().$toast.error(error.message);
+  if (error) return console.log(error.message);
 
-  //   useNuxtApp().$toast.success("Compte créé ! Vérifiez votre e‑mail.");
+  console.log("Compte créé ! Vérifiez votre e‑mail.");
   await navigateTo("/");
 }
 </script>

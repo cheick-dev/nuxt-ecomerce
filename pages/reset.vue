@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ layout: "auth" });
 import { ref } from "vue";
 import { z } from "zod";
 import {
@@ -24,6 +25,7 @@ const schema = z.object({
 async function resetPassword() {
   errors.value = {};
   const result = schema.safeParse({ email: email.value });
+  console.log(result);
 
   if (!result.success) {
     result.error.issues.forEach((i) => (errors.value[i.path[0]] = i.message));
@@ -40,11 +42,12 @@ async function resetPassword() {
   loading.value = false;
 
   if (error) {
-    useNuxtApp().$toast.error(error.message);
+    console.log(error);
+
     return;
   }
 
-  useNuxtApp().$toast.success("Instructions envoyées par email");
+  console.log("Instructions envoyées par email");
   await navigateTo("/login");
 }
 </script>

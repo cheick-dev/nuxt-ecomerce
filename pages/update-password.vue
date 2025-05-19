@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ layout: "auth" });
 import { ref } from "vue";
 import { z } from "zod";
 import {
@@ -49,7 +50,7 @@ async function updatePassword() {
   loading.value = false;
 
   if (error) {
-    useNuxtApp().$toast.error(error.message);
+    console.log(error.message);
     return;
   }
 
