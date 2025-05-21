@@ -16,7 +16,14 @@
 import prisma from "~/server/db/client";
 
 export default defineEventHandler(async (event) => {
-  return await prisma.product.findMany({
-    include: { images: true, category: true },
-  });
+  try {
+    const products = await prisma.product.findMany({
+      include: { images: true, category: true },
+    });
+    return products;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    // Return a meaningful error response
+    return { error: "Failed to fetch products" };
+  }
 });
