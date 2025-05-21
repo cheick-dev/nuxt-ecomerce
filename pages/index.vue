@@ -17,7 +17,12 @@ function openModal(product: any) {
 <template>
   <div>
     <h1 class="text-3xl mb-6 text-center font-bold">Nos produits</h1>
-    <div v-if="catalogStore.loading" class="text-center">Chargement…</div>
+    <div
+      v-if="catalogStore.loading"
+      class="text-center animate-pulse h-screen flex items-center justify-center"
+    >
+      Chargement…
+    </div>
     <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
       <ProductCard
         v-for="product in catalogStore.products"

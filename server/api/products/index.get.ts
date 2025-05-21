@@ -13,9 +13,7 @@
 //   });
 // });
 
-import { PrismaClient } from "~/lib/generated/prisma";
-
-const prisma = new PrismaClient();
+import prisma from "~/server/db/client";
 
 export default defineEventHandler(async (event) => {
   return await prisma.product.findMany({
