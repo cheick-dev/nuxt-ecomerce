@@ -17,7 +17,7 @@ export const useCatalogStore = defineStore("catalog", () => {
   async function fetchProducts(params: Record<string, any> = {}) {
     loading.value = true;
     const queryString = new URLSearchParams(params).toString();
-    const response = await $fetch<Product[]>(`/api/products?${queryString}`);
+    const response = await $fetch<Product[]>(`/api/products`);
     console.log(response);
     products.value = response;
     loading.value = false;
